@@ -1,5 +1,8 @@
 #include <vector>
 
+
+// time complexity O(n^2)
+// space complexity O(1)
 bool canJump( std::vector<int> &nums ) {
   if( nums.size() > 1 && nums[ 0 ] == 0 )
     return false;
