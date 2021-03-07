@@ -48,3 +48,42 @@ ListNode *reverse( ListNode *head ) {
 
   return prev;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////
+class Solution {
+public:
+    bool isPalindrome(ListNode* head)
+    {
+        ListNode *back = nullptr;
+        bool is_end{ false };
+        if( is_palindrome( head, is_end, back, head ) )
+            return true;
+        
+        return false;
+    }
+    
+    bool is_palindrome( ListNode *cur, bool &end, ListNode * &back, ListNode *head )
+    {
+        if( !cur ) {
+            end = true;
+            return true;
+        }
+        
+        bool is_end = false;
+        ListNode *end_node = nullptr;
+        auto eq = is_palindrome( cur->next, is_end, end_node, head );
+        if( !eq )
+            return false;
+        
+        if( is_end ) {
+            back = head;
+        } else {
+            back = end_node->next;
+        }
+        
+        if( cur->val == back->val )
+            return true;
+        
+        return false;
+    }
+};
