@@ -27,6 +27,7 @@ public:
         return res;
     }
 };
+
 // time: O( N^2 )
 // space: O( 1 )
 class Solution {
