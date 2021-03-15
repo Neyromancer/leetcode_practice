@@ -61,3 +61,56 @@ public:
         return head;
     }
 };
+
+// space O( 1 )
+// time O( N ), where N - list size
+class Solution {
+public:
+    ListNode* swapNodes(ListNode* head, int k) {
+        if( !head )
+            return head;
+        
+        ListNode *end = nullptr;
+        ListNode *begin = nullptr;
+        ListNode *current = head;
+        int cnt{ 0 };
+        while( current ) {
+            ++cnt;
+            if( end )
+                end = end->next;
+            
+            if( cnt == k ) {
+                end = head;
+                begin = current;
+            }
+            
+            current = current->next;
+        }
+        
+        std::swap( end->val, begin->val );
+        return head;
+    }
+};
+
+// time O( N ), where N - list size
+// space O( 1 )
+class Solution {
+public:
+    ListNode* swapNodes(ListNode* head, int k) {
+        if( !head )
+            return head;
+        
+        ListNode *begin = nullptr;
+        ListNode *end = nullptr;
+        for( auto node = head; node; node = node->next ) {
+            end = !end ? end : end->next;
+            if( --k == 0 ) {
+                end = head;
+                begin = node;
+            }
+        }
+        
+        std::swap( end->val, begin->val );
+        return head;
+    }
+};
