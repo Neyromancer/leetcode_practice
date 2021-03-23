@@ -44,3 +44,41 @@ public:
         return storage.size();
     }
 };
+
+// space O( 1 ), as we are using constant arrays
+class HitCounter {
+    std::array<int, 300> times{};
+    std::array<int, 300> hits{};
+public:
+    /** Initialize your data structure here. */
+    HitCounter() {}
+    
+    // time O( 1 ) 
+    /** Record a hit.
+        @param timestamp - The current timestamp (in seconds granularity). */
+    void hit(int timestamp) 
+    {
+        int index = timestamp % 300;
+        auto val = times[ index ];
+        if( val != timestamp ) {
+            times[ index ] = timestamp;
+            hits[ index ] = 1;
+        } else {
+            ++hits[ index ];
+        }
+    }
+    
+     // time O( times.size() )
+    /** Return the number of hits in the past 5 minutes.
+        @param timestamp - The current timestamp (in seconds granularity). */
+    int getHits(int timestamp)
+    {
+        int res{ 0 };
+        for( int i = 0; i < 300; ++i ) {
+            if( timestamp - times[ i ] < 300 )
+                res += hits[ i ];
+        }
+        
+        return res;
+    }
+};
