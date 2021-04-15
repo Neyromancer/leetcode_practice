@@ -1,0 +1,40 @@
+class Solution {
+public:
+    // time O( nums.size() )
+    // space O( 1 )
+    vector<int> productExceptSelf(vector<int>& nums)
+    {
+        std::vector<int> res( nums.size() );
+        res.front() = 1;
+        for( int i = 1; i < nums.size(); ++i )
+            res[ i ] = res[ i - 1 ] * nums[ i - 1 ];
+        
+        int right{ 1 };
+        for( int i = res.size() - 1; i >= 0; --i ) {
+            res[ i ] *= right;
+            right *= nums[ i ];
+        }
+        
+        return res;
+    }
+};
+
+class Solution {
+public:
+    // time O( nums.size() )
+    // space O( 1 )
+    vector<int> productExceptSelf(vector<int>& nums) 
+    {
+        std::vector<int> res( nums.size(), 1 );
+        int left{ 1 };
+        int right{ 1 };
+        for( int i = 0; i < res.size(); ++i ) { O( nums.size() )
+            res[ i ] *= left; // O( 1 )
+            left *= nums[ i ];
+            res[ nums.size() - i -  1 ] *= right; // O( 1 )
+            right *= nums[ nums.size() - i - 1 ];
+        }
+        
+        return res;
+    }
+};
