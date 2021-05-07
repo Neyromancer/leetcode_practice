@@ -87,3 +87,202 @@ public:
         }
     }
 };
+
+    // time O( N^2 x M^2 log NxM )
+    // space O( N )
+    void solve( vector<vector<char>>& board )
+    {
+        for( int i = 0; i < board.size(); ++i ) {
+            for( int j = 0; j < board.front().size(); ++j ) {
+                if( board[ i ][ j ] == 'O' ) {
+                    std::set<std::pair<int,int>> st;
+                    if( surrounded_region( board, i, j, st ) ) {
+                        for( auto &[ r, c ] : st )
+                            board[ r ][ c ] = 'X';
+                    }
+                }
+            }
+        }
+    }
+    
+    bool surrounded_region( const std::vector<std::vector<char>> &board,
+                            int i, int j, std::set<std::pair<int,int>> &st ) {
+        if( i < 0 || j < 0 || i >= board.size() || j >= board.front().size() )
+            return false;
+
+        if( board[ i ][ j ] == 'X' )
+            return true;
+        
+        if( st.count( { i, j } ) )
+            return true;
+        
+        st.insert( { i, j } );
+        
+        return surrounded_region( board, i + 1, j, st )  &&
+               surrounded_region( board, i, j - 1, st ) &&
+               surrounded_region( board, i - 1, j, st ) &&
+               surrounded_region( board, i, j + 1, st );
+    }
+
+class Solution {
+public:
+    // space O( N x M)
+    // time O( N^2 x M )
+    void solve(vector<vector<char>>& board) 
+    {
+        int r_size = board.size(); // O( 1 )
+        int c_size = board.front().size(); // O( 1 )
+        std::vector<std::vector<bool>> st( board.size(), std::vector<bool>( board.front().size() ) );
+        for( int i = 0; i < c_size; ++i ) { // O( board.front().size() )
+            if( board[ 0 ][ i ] == 'O' ) { // O( 1 )
+                change( board, 0, i, '1', st );
+            }
+            
+            if( board[ r_size - 1 ][ i ] == 'O' ) { // O( 1 )
+                change( board, r_size - 1, i, '1', st );
+            }
+        }
+        
+        // O( board.size() * board.size() * board.front().size() )
+        for( int i = 0; i < board.size(); ++i ) { // O( board.size() )
+            if( board[ i ][ 0 ] == 'O' ) { // O( 1 )
+                change( board, i, 0, '1', st ); // O( board.size() x board.front().size() )
+            } 
+            
+            if( board[ i ][ c_size - 1 ] == 'O' ) { // O( 1 )
+                change( board, i, c_size - 1, '1', st ); // O( board.size() x board.front().size() )
+            }
+        }
+        
+        // O( board.size() x board.front().size() )
+        for( int i = 0; i < board.size(); ++i ) { // O( board.size() )
+            for( int j = 0; j < board.front().size(); ++j ) { // O( board.front().size() )
+                if( board[ i ][ j ] == 'O' ) // O( 1 )
+                    board[ i ][ j ] = 'X'; // O( 1 )
+            }
+        }        
+        
+        // O( board.size() x board.front().size() )
+        for( int i = 0; i < board.size(); ++i ) { // O( board.size() )
+            for( int j = 0; j < board.front().size(); ++j ) { // O( board.front().size() )
+                if( board[ i ][ j ] == '1' ) // O( 1 )
+                    board[ i ][ j ] = 'O'; // O( 1 )
+            }
+        }
+    }
+    
+    // O( board.size() x board.front().size() )
+    void change( vector<vector<char>>& board, int i, int j, char ch, 
+                 std::vector<std::vector<bool>> &st )
+    {
+        if( i < 0 || j < 0 || i >= board.size() || j >= board.front().size() )
+            return;
+        
+        if( board[ i ][ j ] == 'X' || st[ i ][ j ] ) // O( 1 )
+            return;
+        
+        if( board[ i ][ j ] == 'O' )
+            board[ i ][ j ] = ch; // O( 1 )
+        
+        st[ i ][ j ] = true;
+        change( board, i + 1, j, ch, st ); // O( board.size() x board.front().size() )
+        change( board, i - 1, j, ch, st );
+        change( board, i, j - 1, ch, st );
+        change( board, i, j + 1, ch, st );
+    }
+
+class UnionFind {
+    std::vector<int> id;
+    std::vector<int> rank;
+    int count{ 0 };
+
+public:
+    UnionFind( int N )
+    {
+        count = N;
+        id.resize( N );
+        rank.resize( N );
+        std::fill( std::begin( rank ), std::end( rank ), 0 );
+        for( int i = 0; i < N; ++i )
+            id[ i ] = i;
+    }
+    
+    int find_root( int p )
+    {
+        while( p != id[ p ] ) {
+            id[ p ] = id[ id[ p ] ];
+            p = id[ p ];
+        }
+        
+        return p;
+    }
+    
+    int get_count()
+    {
+        return count;
+    }
+    
+    bool connected( int p, int q )
+    {
+        return find_root( p ) == find_root( q );
+    }
+    
+    void connect( int p, int q )
+    {
+        int i = find_root( p );
+        int j = find_root( q );
+        if( i == j )
+            return;
+        
+        if( rank[ i ] < rank[ j ] )
+            id[ i ] = j;
+        else if( rank[ i ] > rank[ j ] )
+            id[ j ] = i;
+        else {
+            id[ j ] = i;
+            ++rank[ i ];
+        }
+        
+        --count;
+    }
+};
+
+class Solution {
+public:
+    void solve(vector<vector<char>>& board) 
+    {
+        int n = board.size();
+        if( !n )
+            return;
+        
+        int m = board.front().size();
+        UnionFind uf( n * m + 1 );
+        for( int i = 0; i < n; ++i ) {
+            for( int j = 0; j < m; ++j ) {
+                if( ( i == 0 || i == n - 1 || j == 0 || j == m - 1 ) && 
+                  board[ i ][ j ] == 'O' ) {
+                    uf.connect( i * m + j, n * m );
+                } else if( board[ i ][ j ] == 'O' ) {
+                    if( board[ i - 1 ][ j ] == 'O' )
+                        uf.connect( i * m + j, ( i - 1 ) * m + j );
+                    
+                    if( board[ i + 1 ][ j ] == 'O' )
+                        uf.connect( i * m + j, ( i + 1 ) * m + j );
+                    
+                    if( board[ i ][ j - 1 ] == 'O' )
+                        uf.connect( i * m + j, i * m + j - 1 );
+                    
+                    if( board[ i ][ j + 1 ] == 'O' )
+                        uf.connect( i * m + j, i * m + j + 1 );
+                }
+            }
+        }
+        
+        for( int i = 0; i < n; ++i ) {
+            for( int j = 0; j < m; ++j ) {
+                if( !uf.connected( i * m + j, n * m ) )
+                    board[ i ][ j ] = 'X';
+            }
+        }
+    }
+};
