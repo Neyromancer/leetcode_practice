@@ -51,3 +51,30 @@ public:
         // return 0;
     }
 };
+
+class Solution {
+public:
+    /// space O( N ), where N is the shorted string
+    /// time O( N * M ), where N == text1.size() and M == text2.size()
+    int longestCommonSubsequence(string text1, string text2)
+    {
+        if( text1.size() < text2.size() )
+            return longestCommonSubsequence( text2, text1 );
+
+        std::vector<std::vector<int>> dp( 2, std::vector<int>( text2.size() + 1 ) );
+        int res{ 0 };
+        for( int i = 0, row = 1; i < text1.size(); ++i, row ^= 1 ) {
+            for( int j = 0; j < text2.size(); ++j ) {
+                int col = j + 1;
+                if( text1[ i ] == text2[ j ] )
+                    dp[ row ][ col ] = 1 + dp[ row ^ 1 ][ col - 1 ];
+                else
+                    dp[ row ][ col ] = std::max( dp[ row ^ 1 ][ col ], dp[ row ][ col - 1 ] );
+                
+                res = std::max( dp[ row ][ col ], res );
+            }
+        }
+        
+        return res;
+    }
+};
