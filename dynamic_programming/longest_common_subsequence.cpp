@@ -78,3 +78,24 @@ public:
         return res;
     }
 };
+
+class Solution {
+public:
+    int longestCommonSubsequence(string text1, string text2)
+    {
+        if( text1.size() < text2.size() )
+            return longestCommonSubsequence( text2, text1 );
+        
+        std::vector<int> dp( text2.size() + 1 );
+        for( int i = 0; i < text1.size(); ++i ) {
+            for( int j = 0, prevColPrevRow = 0, prevRow = 0; j < text2.size(); ++j ) {
+                prevColPrevRow = prevRow;
+                prevRow = dp[ j + 1 ];
+                dp[ j + 1 ] = ( text1[ i ] == text2[ j ] ? 1 + prevColPrevRow : 
+                               std::max( dp[ j ], prevRow ) );
+            }
+        }
+        
+        return dp[ text2.size() ];
+    }
+};
