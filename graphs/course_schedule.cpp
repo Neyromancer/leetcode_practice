@@ -90,3 +90,96 @@ public:
 
 // =======================================================================================================
 // BFS:
+
+/*
+5
+[[1,4],[2,4],[3,1],[3,2]]
+2
+[[1,0]]
+3
+[[1,0],[0,2],[2,1]]
+2
+[[1,0],[0,1]]
+20
+[[0,10],[3,18],[5,5],[6,11],[11,14],[13,1],[15,1],[17,4]]
+8
+[[1,0],[2,6],[1,7],[6,4],[7,0],[0,5]]
+*/
+class Solution {
+public:
+    /*
+    2
+        [[1,0]]
+        graph:
+          1: 0
+         
+         indegree: 1 0
+                   0 1 
+         q
+    */
+    
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites )
+    {
+        if( prerequisites.size() == 1 && numCourses != 1 )
+            return true;
+        else if( prerequisites.size() == 1 && numCourses == 2 )
+            return false;
+        std::unordered_map<int, std::vector<int>> graph = create_graph( prerequisites );
+        std::vector<int> indegree = create_indegree( graph, numCourses );
+        int cnt{ 0 };
+        std::queue<int> q;
+        for( int i = 0; i < numCourses; ++i ) {
+            if( indegree[ i ] )
+                continue;
+            
+            ++cnt;
+            q.push( i );
+            while( !q.empty() ) {
+                auto node = q.front();
+                q.pop();
+                if( !graph.count( node ) )
+                    continue;
+                
+                for( auto vertex : graph[ node ] ) {
+                    if( --indegree[ vertex ] == 0 ) {
+                        q.push( vertex );
+                        ++cnt;
+                        indegree[ vertex ] = -1;
+                    }
+                }
+            }
+        }
+        
+        // std::cout << "cnt = " << cnt << std::endl;
+        // std::cout << "size = " << prerequisites.size() << std::endl;
+        return cnt == numCourses;
+    }
+
+    std::unordered_map<int, std::vector<int>> 
+    create_graph( const std::vector<std::vector<int>> &prerequisites )
+    {
+        std::unordered_map<int, std::vector<int>> graph;
+        for( const auto &node : prerequisites )
+            graph[ node[ 1 ] ].push_back( node[ 0 ] );
+        
+        return graph;
+    }
+    
+    std::vector<int> create_indegree( const std::unordered_map<int, std::vector<int>> &graph,
+                                     int numCourses )
+    {
+        std::vector<int> indegree( numCourses );
+        for( const auto &[ v, dependencies ] : graph ) {
+            if( indegree[ v ] < 0 )
+                indegree[ v ] = 0;
+            for( auto vertex : dependencies ) {
+                if( indegree[ vertex ] < 0 )
+                    indegree[ vertex ] = 0;
+
+                ++indegree[ vertex ];
+            }
+        }
+        
+        return indegree;
+    }
+};
