@@ -87,6 +87,49 @@ public:
     }
 };
 
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites)
+    {
+        std::vector<std::vector<int>> graph = create_graph( numCourses, prerequisites );
+        std::vector<bool> visited( numCourses );
+        std::vector<bool> to_visit( numCourses );
+        for( int i = 0; i < numCourses; ++i ) {
+            if( !visited[ i ] && !acycle( graph, visited, to_visit, i ) )
+                return false;
+        }
+        
+        return true;
+    }
+    
+    std::vector<std::vector<int>>
+    create_graph( int numCourses, const vector<vector<int>> &prerequisites )
+    {
+        std::vector<std::vector<int>> res( numCourses );
+        for( const auto &courses : prerequisites )
+            res[ courses[ 1 ] ].push_back( courses[ 0 ] );
+        
+        return res;
+    }
+    
+    bool acycle( const std::vector<std::vector<int>> &graph,
+                 std::vector<bool> &visited, std::vector<bool> &to_visit, int node )
+    {
+        if( to_visit[ node ] )
+            return false;
+        
+        if( visited[ node ] )
+            return true;
+        
+        visited[ node ] = to_visit[ node ] = true;
+        for( auto n : graph[ node ] )
+            if( !acycle( graph, visited, to_visit, n ) )
+                return false;
+        
+        to_visit[ node ] = false;
+        return true;
+    }
+};
 
 // =======================================================================================================
 // BFS:
@@ -181,5 +224,101 @@ public:
         }
         
         return indegree;
+    }
+};
+
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites )
+    {
+        std::unordered_map<int, std::vector<int>> graph = create_graph( prerequisites );
+        std::unordered_map<int, int> indegree = create_indegree( graph );
+        int checked_nodes{ 0 };
+        std::queue<int> q;
+        for( auto &[ vertex, nedges ] : indegree ) {
+            if( nedges )
+                continue;
+            
+            q.push( vertex );
+            while( !q.empty() ) {x
+                auto node = q.front();
+                q.pop();
+                
+                ++checked_nodes;
+                for( auto v : graph[ node ] ) {
+                    if( --indegree[ v ] == 0 ) {
+                        q.push( v );
+                        
+                        indegree[ v ] = -1;
+                        indegree[ node ] = -1;
+                    }
+                }
+            }
+        }
+        
+        return checked_nodes == graph.size();
+    }
+    
+    std::unordered_map<int, std::vector<int>> create_graph( const vector<vector<int>> &prerequisites )
+    {
+        std::unordered_map<int, std::vector<int>> res;
+        for( const auto &courses : prerequisites )
+            res[ courses[ 1 ] ].push_back( courses[ 0 ] );
+        
+        return res;
+    }
+    
+    std::unordered_map<int, int> 
+    create_indegree( const std::unordered_map<int, std::vector<int>> &graph )
+    {
+        std::unordered_map<int, int> res;
+        for( const auto &[ node, dependencies ] : graph ) {
+            res[ node ];
+            for( const auto &v : dependencies )
+                ++res[ v ];
+        }
+        
+        return res;
+    }
+};
+
+class Solution {
+public:
+    // space O( N ), where N == numCourses
+    // time O( N + M ), where M == prerequisites.size() and N == numCourses
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites)
+    {
+        std::vector<std::vector<int>> adjes( numCourses );
+        std::vector<int> indegrees( numCourses, 0 );
+        // O( M ), where M == prerequisites.size()
+        for( const auto &courses : prerequisites ) {
+            adjes[ courses[ 1 ] ].push_back( courses[ 0 ] );
+            ++indegrees[ courses[ 0 ] ];
+        }
+        
+        std::queue<int> q;
+        // O( N ), where N == numCourses
+        for( int i = 0; i < indegrees.size(); ++i ) {
+            if( indegrees[ i ] )
+                continue;
+            
+            q.push( i );
+            while( !q.empty() ) {
+                auto node = q.front();
+                q.pop();
+                --numCourses;
+                
+                for( auto n : adjes[ node ] ) {
+                    if( --indegrees[ n ] == 0 ) {
+                        q.push( n );
+                        indegrees[ n ] = -1;
+                        indegrees[ node ] = -1;
+                    }
+                }
+            }
+        }
+        
+        // std::cout << "numCourses " << numCourses << std::endl;
+        return numCourses == 0;
     }
 };
