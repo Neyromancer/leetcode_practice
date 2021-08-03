@@ -76,3 +76,28 @@ public:
         return res;
     }
 };
+
+class Solution {
+public:
+    // time O( sizeof( nums ) * sizeof( nums ) )
+    // space O( 1 )
+    int longestSubarray(vector<int>& nums)
+    {
+        int l{ 0 };
+        int r{ 0 };
+        int cnt{ 0 };
+        bool is_w{ false };
+        while( r < nums.size() ) {
+            while( l <= r && is_w && !nums[ r ] ) {
+                if( !nums[ l++ ] )
+                    is_w = false;
+            }
+            
+            cnt = std::max( cnt, r - l );
+            if( !nums[ r++ ] )
+                is_w = true;
+        }
+        
+        return cnt;
+    }
+};
