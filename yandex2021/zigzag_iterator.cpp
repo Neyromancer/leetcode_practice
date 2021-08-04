@@ -166,3 +166,100 @@ public:
         return output < available;
     }
 };
+
+/**
+[1,2]
+[3,4,5,6]
+[1]
+[]
+[]
+[1]
+[1,2,4]
+[5,6,7]
+[1,2,4,8]
+[5,6,7]
+[1,2,4]
+[5,6,7,9]
+[1,2]
+[]
+[1,2,3]
+[]
+[]
+[1,2,3]
+[]
+[1,2]
+[1,2]
+[3,4,5,6]
+[1]
+[]
+*/
+class ZigzagIterator {
+    std::queue<std::pair<std::vector<int>::iterator,std::vector<int>::iterator>> q;
+public:
+    // time O( std::max( v1.size, v2.size ) )
+    // space O( 1 )
+    ZigzagIterator(vector<int>& v1, vector<int>& v2)
+    {
+        if( !v1.empty() )
+            q.push( std::make_pair( std::begin( v1 ), std::end( v1 ) ) );
+
+        if( !v2.empty() )
+            q.push( std::make_pair( std::begin( v2 ), std::end( v2 ) ) );
+    }
+
+    // time O( 1 )
+    // space O( 1 )
+    bool hasNext()
+    {
+        return !q.empty();
+    }
+
+    // time O( 1 )
+    // space O( 1 )
+    int next()
+    {
+        auto [ begin, end ] = q.front();
+        q.pop();
+        int res = *( begin++ );
+        if( begin != end )
+            q.push( std::make_pair( begin, end ) );
+        
+        return res;
+    }
+};
+
+class ZigzagIterator {
+    std::queue<int> q;
+public:
+    // time O( std::max( v1.size, v2.size ) )
+    // space O( sizeof( v1 ) + sizeof( v2 ) )
+    ZigzagIterator(vector<int>& v1, vector<int>& v2)
+    {
+        int i{ 0 };
+        int j{ 0 };
+        while( i < v1.size() || j < v2.size() ) {
+            if( i < v1.size() )
+                q.push( v1[ i++ ] );
+            
+            if( j < v2.size() )
+                q.push( v2[ j++ ] );
+        }
+    }
+    
+    
+    // time O( 1 )
+    // space O( 1 )
+    bool hasNext()
+    {
+        return !q.empty();
+    }
+
+    // time O( 1 )
+    // space O( 1 )
+    int next()
+    {
+        auto node = q.front();
+        q.pop();
+        return node;
+    }
+};
