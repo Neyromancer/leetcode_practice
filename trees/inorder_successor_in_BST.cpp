@@ -53,3 +53,27 @@ public:
         return nullptr;
     }
 };
+
+class Solution {
+public:
+    // time O( H ), where H == is the hight of the tree
+    // space O( 1 )
+    TreeNode* inorderSuccessor(TreeNode* root, TreeNode* p)
+    {
+        if( !root || !p )
+            return nullptr;
+        
+        TreeNode *res{ nullptr };
+        while( root ) {
+            if( root->val > p->val )
+                res = root;
+            
+            if( p->val >= root->val )
+                root = root->right;
+            else
+                root = root->left;
+        }
+        
+        return res;
+    }
+};
