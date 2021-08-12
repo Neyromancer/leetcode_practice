@@ -1,7 +1,7 @@
 class Solution {
 public:
-    // time O( N ), where N is the number of nodes in the tree
-    // space O( N ), where N is the number of nodes in the tree
+    // time O( H ), where H is the height of the tree
+    // space O( H ), where H is the height the tree
     TreeNode* searchBST( TreeNode* root, int val )
     {
         if( !root )
@@ -19,8 +19,8 @@ public:
 
 class Solution {
 public:
-    // time O( N ), where N == number of nodes in the tree
-    // space O( N ), where N == number of nodes in the tree
+    // time O( H ), where H is the height of the tree
+    // space O( H ), where H is the height of the tree
     TreeNode* searchBST( TreeNode* root, int val )
     {
         if( !root )
@@ -44,5 +44,22 @@ public:
         }
         
         return nullptr;
+    }
+};
+
+class Solution {
+public:
+    // time O( H ), where H is the height of the tree
+    // space O( 1 )
+    TreeNode* searchBST( TreeNode* root, int val )
+    {
+        while( root && root->val != val ) {
+            if( root->val > val )
+                root = root->left;
+            else
+                root = root->right;
+        }
+        
+        return root;
     }
 };
