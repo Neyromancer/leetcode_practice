@@ -39,3 +39,29 @@ public:
         return swaps;
     }
 };
+
+class Solution {
+public:
+    // time O( sizeof( data ) )
+    // space O( sizeof( data ) )
+    int minSwaps(vector<int>& data)
+    {
+         // O( sizeof( data ) )
+        int ones = std::count( std::begin( data ), std::end( data ), 1 );
+        int local_ones{ 0 };
+        int nswaps{ std::numeric_limits<int>::max() };
+        std::deque<int> q;
+        for( int r = 0; r < data.size(); ++r ) {
+            q.push_back( data[ r ] ); // O( 1 )
+            local_ones += q.back(); // O( 1 )
+            if( q.size() > ones ) {
+                local_ones -= q.front(); // O( 1 )
+                q.pop_front(); // O( 1 )
+            }
+            
+            nswaps = std::min( nswaps, ones - local_ones );
+        }
+        
+        return nswaps;
+    }
+};
