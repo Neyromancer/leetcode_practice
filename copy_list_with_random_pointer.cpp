@@ -183,3 +183,56 @@ public:
         return storage[ head ];
     }
 };
+
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* next;
+    Node* random;
+    
+    Node(int _val) {
+        val = _val;
+        next = NULL;
+        random = NULL;
+    }
+};
+*/
+
+class Solution {
+public:
+    // time O( sizeof( head ) * log( sizeof( head ) ) )
+    // space O( sizeof( head ) )
+    Node* copyRandomList(Node* head) {
+        if( !head )
+            return head;
+
+        std::map<Node *, Node *> st_random;
+        std::map<Node *, Node *> orig_new;
+        
+        auto cur = head;
+        while( cur ) {
+            st_random.emplace( cur, cur->random ); // O( log(sizeof( head ) ) )
+            orig_new.emplace( cur, new Node( cur->val ) ); // O( log(sizeof( head ) ) )
+            cur = cur->next;
+        }
+        
+        for( const auto& [ orig, random ] : st_random ) { // O( sizeof( head ) )
+            auto& nnode = orig_new[ orig ]; // O( log(sizeof( head ) ) )
+            auto target_node = orig_new[ random ]; // O( log(sizeof( head ) ) )
+            nnode->random = target_node;
+        }
+        
+        Node *dump = new Node( -1 );
+        cur = dump;
+        for( const auto&[ orig, dest ] : orig_new ) { // O( sizeof( head ) )
+            if( dest ) {
+                cur->next = dest;
+                cur = cur->next;
+            }
+        }
+        
+        return dump->next;
+    }
+};
