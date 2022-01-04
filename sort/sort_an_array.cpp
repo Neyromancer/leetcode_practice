@@ -1,3 +1,4 @@
+// Top-Down implementation
 class Solution {
 public:    
     vector<int> sortArray( vector<int>& nums ) {
@@ -39,6 +40,45 @@ public:
                 nums[ i ] = storage[ li++ ];
             } else {
                 nums[ i ] = storage[ ri++ ];
+            }
+        }
+    }
+};
+
+// Bottom-Up implementation
+class Solution {
+public:
+    vector<int> sortArray(vector<int>& nums)
+    {
+        int size = nums.size();
+        std::vector<int> aux( nums.size() );
+        for( int sz = 1; sz < size; sz = sz + sz ) {
+            for( int lo = 0; lo < size - sz; lo += sz + sz ) {
+                merge( nums, aux, lo, lo + sz - 1, std::min( lo + sz + sz - 1, size - 1 ) );
+            }
+        }
+
+        return nums;
+    }
+    
+    void merge( std::vector<int>& nums, std::vector<int>& aux, int lo, int mid, int hi ) {
+        if( lo >= hi )
+            return;
+        
+        for( int i = lo; i <= hi; ++i )
+            aux[ i ] = nums[ i ];
+        
+        int i = lo;
+        int j = mid + 1;
+        for( int k = lo; k <= hi; ++k ) {
+            if( i > mid ) {
+                nums[ k ] = aux[ j++ ];
+            } else if( j > hi ) {
+                nums[ k ] = aux[ i++ ];
+            } else if( aux[ i ] > aux[ j ] ) {
+                 nums[ k ] = aux[ j++ ];
+            } else {
+                nums[ k ] = aux[ i++ ];
             }
         }
     }
