@@ -83,3 +83,47 @@ public:
         }
     }
 };
+
+// quick sort
+class Solution {
+public:
+    vector<int> sortArray(vector<int>& nums)
+    {
+        std::random_device rd;
+        std::mt19937 gen{ rd() };
+        std::shuffle( std::begin( nums ), std::end( nums ), gen );
+        sort( nums, 0, nums.size() - 1 );
+        return nums;
+    }
+    
+    void sort( std::vector<int>& nums, int lo, int hi ) {
+        if( lo >= hi )
+            return;
+        
+        int j = partition( nums, lo, hi );
+        sort( nums, lo, j - 1 );
+        sort( nums, j + 1, hi );
+    }
+    
+    int partition( std::vector<int>& nums, int lo, int hi ) {        
+        int i = lo;
+        int j = hi + 1;
+        while( true ) {
+            while( nums[ ++i ] < nums[ lo ] ) {
+                if( i == hi )
+                    break;
+            }
+            
+            while( nums[ lo ] < nums[ --j ] ) {
+                if( j == lo )
+                    break;
+            }
+            
+            if( i >= j ) break;
+            std::swap( nums[ i ], nums[ j ] );
+        }
+        
+        std::swap( nums[ lo ], nums[ j ] );
+        return j;
+    }
+};
