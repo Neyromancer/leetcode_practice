@@ -20,7 +20,7 @@ impl Solution {
 }
 
 // Top-down implementatino
-// TC: O( n )
+// TC: O( 2^n )
 // SC O( n )
 impl Solution {
     pub fn fib(n: i32) -> i32 {
