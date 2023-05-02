@@ -39,3 +39,14 @@ def numberOfSubstrings(self, s: str) -> int:
             cache[ord(s[left]) - 97] -= 1
             left += 1
     return res
+
+
+# SC: O(1)
+# TC: O(N), where N == len(s)
+def numberOfSubstrings(self, s: str) -> int:
+    cache: List[int] = [-1] * 3
+    res: int = 0
+    for i, ch in enumerate(s):
+         cache[ord(ch) - 97] = i
+         res += min(cache) + 1
+    return res
