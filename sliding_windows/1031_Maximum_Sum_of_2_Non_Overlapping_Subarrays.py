@@ -22,6 +22,7 @@ Input: nums = [2,1,5,6,0,9,5,0,3,8], firstLen = 4, secondLen = 3
 Output: 31
 Explanation: One choice of subarrays is [5,6,0,9] with length 4, and [0,3,8] with length 3.
 
+PREFIX SUM SOULTION
 TC: O(N), where N == len(nums)
 SC: O(N), where N == len(nums)
 """
@@ -39,4 +40,27 @@ def maxSumTwoNoOverlap(self, nums: List[int], firstLen: int, secondLen: int) -> 
             res = max(res, first_max_sum + nums[i] - nums[i - secondLen])
         return res
     
-    return max(range_max(prefixSumArray, firstLen, secondLen), range_max(prefixSumArray, secondLen, firstLen))
+    return max(range_max(prefixSumArray, firstLen, secondLen), range_max(prefixSumArray, secondLen, firstLen)
+
+"""
+SLIDING WINDOW SOLUTION
+
+TC: O(N), where N == len(nums)
+SC: O(1)
+"""
+
+def maxSumTwoNoOverlap(self, nums: List[int], firstLen: int, secondLen: int) -> int:
+    def rangeSum(nums: List[int], firstLen: int, secondLen: int) -> int:
+        first_sum: int = sum(nums[:firstLen])
+        second_sum: int = sum(nums[firstLen: firstLen + secondLen])
+
+        res: int = second_sum + first_sum
+        first_max_sum = first_sum
+        for i in range(firstLen + secondLen, len(nums)):
+            first_sum += nums[i - secondLen] - nums[i - firstLen - secondLen]
+            first_max_sum = max(first_max_sum, first_sum)
+            second_sum += nums[i] - nums[i - secondLen]
+            res = max(res, first_max_sum + second_sum)
+        
+        return res
+    return max(rangeSum(nums, firstLen, secondLen), rangeSum(nums, secondLen, firstLen))
