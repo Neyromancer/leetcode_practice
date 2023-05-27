@@ -31,3 +31,28 @@ def numSubarraysWithSum(self, nums: List[int], goal: int) -> int:
 
         cache[sub_sum] += 1     # <-
     return res
+
+
+"""
+    TC: O(N), where N == len(nums)
+    SC: O(1)
+"""
+def countSubarraysWithUptoSum(self, nums: List[int], goal: int) -> int:
+    if goal < 0:
+        return 0
+
+    sub_sum: int = 0
+    left: int = 0
+    res: int = 0
+    for right in range(len(nums)):
+        sub_sum += nums[right]
+
+        while sub_sum > goal:
+            sub_sum -= nums[left]
+            left += 1
+        
+        res += right - left + 1
+    return res
+
+def numSubarraysWithSum(self, nums: List[int], goal: int) -> int:
+    return self.countSubarraysWithUptoSum(nums, goal) - self.countSubarraysWithUptoSum(nums, goal - 1)
