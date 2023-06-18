@@ -44,3 +44,27 @@ def scoreOfParentheses(self, s: str) -> int:
         elif ch == ")":
             score = stack.pop() + max(score * 2, 1) # O(1)
     return score
+
+
+"""
+Count the number of opening braces when we stumble on the 1st closing brances after openning braces it means that we reached the bottom
+level of the sequence of braces, e.g like "((()))". When the bottom is reached it's score could be calculated as 2 power number of braces.
+It is so becase we have the rule that each higher level has a score of the previous lower level multipled by 2, in other words 2 times the number of levels substracting the bottom level.
+
+  TC: O(N), where N == len(s)
+  SC: O(1)
+"""
+
+def scoreOfParentheses(self, s: str) -> int:
+    braces: int = 0
+    ans: int = 0
+
+    for i, ch in enumerate(s):
+        if ch == "(":
+            braces += 1
+        else:
+            braces -= 1
+
+            if s[i - 1] == "(":
+                ans += 1 << braces
+    return ans
