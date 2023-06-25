@@ -68,3 +68,23 @@ def scoreOfParentheses(self, s: str) -> int:
             if s[i - 1] == "(":
                 ans += 1 << braces
     return ans
+
+"""
+    TC: O(N * N), where N == len(s)
+    SC O(N), where N == len(s)
+"""
+def scoreOfParentheses(self, s: str) -> int:
+    return self.countScore(s, 0, len(s))
+
+def countScore(self, s: str, i: int, j: int) -> int:
+    bal: int = 0
+    res: int = 0
+    for k in range(i, j):
+        bal += 1 if s[k] == "(" else -1
+        if bal == 0:
+            if k - i == 1:
+                res += 1
+            else:
+                res += 2 * self.countScore(s, i + 1, k)
+            i = k + 1
+    return res
