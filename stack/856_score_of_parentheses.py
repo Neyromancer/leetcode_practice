@@ -69,22 +69,63 @@ def scoreOfParentheses(self, s: str) -> int:
                 ans += 1 << braces
     return ans
 
-"""
+    def scoreOfParentheses(self, s: str) -> int:
+        return self.__countScores(s, 0, len(s))
+    
+    """
+                                |
+        ( ( ( ( ) ) ( ) ) (  )  )
+        0 1 2 3 4 5 6 7 8 9 10 11
+
+        res:   0, 2 * (7)
+        scope: 0, 1, 2, 3, 4, 3, 2, 3, 2, 1, 2, 1, 0
+
+                      |
+        ( ( ( ) ) ( ) ) ( )
+        0 1 2 3 4 5 6 7 8 9
+
+        1. res:   0, 2 * (3)
+           scope: 0, 1, 2, 3, 2, 1, 2, 1, 0
+        2. res: 0, 1
+           scope: 0, 1, 0
+
+              |
+        ( ( ) ) ( )
+        0 1 2 3 4 5
+
+        1. res:   0, 2 * (1)
+           scope: 0, 1, 2, 1, 0
+        2. res:   0, 1
+           scope: 0, 1, 0
+
+            |
+        ( )
+        0 1
+
+        res:   0, 1
+        scope: 0, 1, 0
+
+          |
+        ( )
+        0 1
+
+        res:   0, 1
+        scope: 0, 1, 0
+
     TC: O(N * N), where N == len(s)
     SC O(N), where N == len(s)
-"""
-def scoreOfParentheses(self, s: str) -> int:
-    return self.countScore(s, 0, len(s))
-
-def countScore(self, s: str, i: int, j: int) -> int:
-    bal: int = 0
+    """
+def __countScores(self, s: str, l: int, r: int) -> int:
     res: int = 0
-    for k in range(i, j):
-        bal += 1 if s[k] == "(" else -1
-        if bal == 0:
-            if k - i == 1:
+    scope: int = 0
+    for k in range(l, r):
+        scope += 1 if s[k] == "(" else -1
+        if scope == 0:
+            if k - l == 1:
                 res += 1
             else:
-                res += 2 * self.countScore(s, i + 1, k)
-            i = k + 1
+                res += 2 * self.__countScores(s, l + 1, k)
+            l = k + 1
+    
     return res
+
