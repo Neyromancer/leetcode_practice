@@ -192,3 +192,31 @@ left       |
             
             res = max(res, abs(house - heaters[i]))
         return res
+
+class Solution:
+    def findRadius(self, houses: List[int], heaters: List[int]) -> int:
+        houses.sort()
+        heaters.sort()
+        radiuses: List[int] = [sys.maxsize] * len(houses)
+        radius_i: int = 0
+        r: int = 0
+        heaters_l: int = 0
+        while r < len(houses) and heaters_l < len(heaters):
+            if houses[r] <= heaters[heaters_l]:
+                radiuses[radius_i] = heaters[heaters_l] - houses[r]
+                radius_i += 1
+                r += 1
+            else:
+                heaters_l += 1
+
+        radius_i = len(radiuses) - 1
+        r = len(houses) - 1
+        heaters_l = len(heaters) - 1
+        while r >= 0 and heaters_l >= 0:
+            if houses[r] >= heaters[heaters_l]:
+                radiuses[radius_i] = min(radiuses[radius_i], houses[r] - heaters[heaters_l])
+                radius_i -= 1
+                r -= 1
+            else:
+                heaters_l -= 1
+        return max(radiuses)
