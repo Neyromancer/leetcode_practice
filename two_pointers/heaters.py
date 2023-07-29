@@ -220,3 +220,33 @@ class Solution:
             else:
                 heaters_l -= 1
         return max(radiuses)
+
+class Solution:
+  # TC: O(N log N + M log N), where N == len(heaters) and M == len(houses)
+  # SC: O(N log N), where N == len(heaters)
+  def findRadius(self, houses: List[int], heaters: List[int]) -> int:
+    heaters.sort()  # O(N log N), where N == len(heaters)
+    result: int = 0
+    for house in houses:
+      i: int = self.binarySearch(
+        heaters, house)  # TC: O(log N), where N == len(heaters)
+      left_distance: int = house - heaters[i - 1] if i > 0 else sys.maxsize
+      right_distance: int = heaters[i] - house if i < len(
+        heaters) else sys.maxsize
+
+      result = max(result, min(left_distance, right_distance))
+    return result
+
+  # TC: O(log N), where N == len(heaters)
+  # SC: O(1)
+  def binarySearch(self, heaters: List[int], house: int) -> int:
+    l: int = 0
+    r: int = len(heaters) - 1  # TC: O(1)
+    while l < r:
+      m: int = l + (r - l) // 2
+      if heaters[m] == house:
+        return m
+      elif heaters[m] > house:
+        r = m
+      else:
+        l = m + 1
