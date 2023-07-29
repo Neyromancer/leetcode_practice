@@ -250,3 +250,23 @@ class Solution:
         r = m
       else:
         l = m + 1
+
+class Solution:
+    """
+        TC: O(N log N + M log M), where N == len(houses), M == len(heaters)
+        SC: O(log N + log M), where N == len(houses), M == len(heaters)
+    """
+    def findRadius(self, houses: List[int], heaters: List[int]) -> int:
+        houses.sort()
+        heaters.sort()
+
+        result: int = 0
+        i: int = 0
+        for house in houses:
+            distance: int = abs(house - heaters[i])
+            while i < len(heaters) - 1 and distance >= abs(house - heaters[i + 1]):
+                i += 1
+                distance = abs(house - heaters[i])
+
+            result = max(result, distance)
+        return result
